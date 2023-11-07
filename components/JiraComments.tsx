@@ -11,12 +11,21 @@ interface Comment {
 const JiraComments = ({ issueId }: { issueId: string }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch(`/api/jira/comments?issueId=${issueId}`)
       .then((res) => res.json())
       .then((data) => {
+        if (!data.comments) {
+          setError('Comments not defined');
+          return;
+        }
         setComments(data.comments);
+      })
+      .catch((error) => {
+        setError('Failed to fetch comments');
+        console.error('Error fetching comments:', error);
       });
   }, [issueId]);
 
@@ -30,13 +39,22 @@ const JiraComments = ({ issueId }: { issueId: string }) => {
     })
       .then((res) => res.json())
       .then((data) => {
+        if (!data || !data.id) {
+          setError('Failed to add comment');
+          return;
+        }
         setComments([...comments, data]);
         setNewComment('');
+      })
+      .catch((error) => {
+        setError('Failed to add comment');
+        console.error('Error adding comment:', error);
       });
   };
 
   return (
     <div>
+      {error && <p className="text-red-500">{error}</p>}
       <div>
         {comments.map((comment) => (
           <div key={comment.id}>

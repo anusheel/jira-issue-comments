@@ -13,6 +13,9 @@ async function getComments(issueId: string) {
       'Accept': 'application/json'
     }
   });
+  if (!response.ok) {
+    throw new Error('Failed to fetch comments');
+  }
   return response.json();
 }
 
@@ -26,6 +29,9 @@ async function addComment(issueId: string, body: string) {
     },
     body: JSON.stringify({ body })
   });
+  if (!response.ok) {
+    throw new Error('Failed to add comment');
+  }
   return response.json();
 }
 
@@ -35,13 +41,21 @@ export default async function handler(
 ) {
   const { issueId, comment } = req.body;
 
-  if (req.method === 'GET') {
-    const comments = await getComments(issueId);
-    res.status(200).json(comments);
-  } else if (req.method === 'POST' && comment) {
-    const newComment = await addComment(issueId, comment);
-    res.status(201).json(newComment);
-  } else {
-    res.status(405).end();
+  try {
+    if (req.method === 'GET') {
+      const comments = await getComments(issueId);
+      res.status(200).json(comments);
+    } else if (req.method === 'POST' && comment) {
+      const newComment = await addComment(issueId, comment);
+      res.status(201).json(newComment);
+    } else {
+      res.status(405).end();
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: 'An unexpected error occurred' });
+    }
   }
 }
