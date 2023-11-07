@@ -1,1 +1,1 @@
-{"config":{"system_prompt":"","model":"gpt-4","temperature":0,"top_p":1,"framework":"nextjs-page-tailwind"},"prompts":[]}
+{"config":{"system_prompt":"","model":"gpt-4","temperature":0,"top_p":1,"framework":"nextjs-page-tailwind"},"prompts":[{"prompt":"Create a component that lists the comments on a given jira issue. Use any relevant api or package to connect with jira. Also add a plus button that allows adding a new comment","md5":"4d88981363ec3cc2e564ed64f58e7794"}]}
